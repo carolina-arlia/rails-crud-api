@@ -13,7 +13,8 @@ class ProductCreator < ApplicationService
   private
 
   def create_product
-    product = Product.create!(title: @title, description: @description, price: @price)
+    product = Product.new(title: @title, description: @description, price: @price)
+    product.save
     product
   end
 

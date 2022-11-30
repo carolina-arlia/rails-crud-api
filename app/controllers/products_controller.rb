@@ -1,9 +1,11 @@
 class ProductsController < ApplicationController
 
   def create
-    # product_creator = ProductCreator.new(product_params)
-    # product_creator.create_product
     ProductCreator.call(product_params)
+  end
+
+  def index
+    Product.all
   end
 
   private
