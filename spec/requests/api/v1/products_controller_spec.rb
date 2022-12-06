@@ -54,8 +54,46 @@ RSpec.describe "Products endpoints", type: :request do
           post api_v1_products_url, params: params
         end.not_to change(Product, :count)
       end
-
-
     end
   end
+
+  describe 'GET /api/v1/products' do
+    context 'asking for list of products' do
+      it 'returns a list' do
+        get api_v1_products_url
+        products = Product.all
+        product_list_response = JSON.parse(response.body, object_class: Product)
+        expect(product_list_response.size).to eq(products.size)
+      end
+
+      it 'returns a 200 http response' do
+        get api_v1_products_url
+        expect(response).to have_http_status(:ok)
+      end
+    end
+  end
+
+  describe 'GET /api/v1/products/:id' do
+    context 'asking for a product' do
+
+      product = Product.new(title: "testing product Caro", description: "testing description product Caro", price: 83.0)
+      product.save
+
+      it 'returns the product' do
+        get api_v1_product_url(product.id)
+        product_response = JSON.parse(response.body, object_class: Product)
+        expect(product_response.id).to eq(product.id)
+        expect(product_response.title).to eq(product.title)
+        expect(product_response.description).to eq(product.description)
+        expect(product_response.price).to eq(product.price)
+
+      end
+
+      it 'returns a 200 http response' do
+        get api_v1_product_url(product.id)
+        expect(response).to have_http_status(:ok)
+      end
+    end
+  end
+
 end
