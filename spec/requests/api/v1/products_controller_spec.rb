@@ -123,6 +123,32 @@ RSpec.describe "Products endpoints", type: :request do
         expect(response.status).to eq(200)
       end
     end
+
+    context 'updating with invalid parameters' do
+      product = Product.new(title: "testing pre-update Caro", description: "testing description product pre-update", price: 83.0)
+      product.save
+
+      params = {
+        product: {
+          carlitos: "title updated Caro",
+        }
+      }
+
+      it 'the product doesnt persist new values' do
+        put api_v1_product_url(product.id), params: params
+        product_not_updated = JSON.parse(response.body, object_class: Product)
+
+        expect(product_not_updated.title).to eq("testing pre-update Caro")
+        expect(product_not_updated.description).to eq("testing description product pre-update")
+        expect(product_not_updated.price).to eq(83.0)
+      end
+
+      it 'response should have HTTP Status 422 Unprocessable entity' do
+        put api_v1_product_url(product.id), params: params
+
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+    end
   end
 
 end

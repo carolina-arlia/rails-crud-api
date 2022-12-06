@@ -1,4 +1,5 @@
 class Api::V1::ProductsController < ApplicationController
+  before_action :validate_params, only: [:update]
 
   def create
     product = ProductCreator.call(product_params)
@@ -30,12 +31,16 @@ class Api::V1::ProductsController < ApplicationController
     end
   end
 
-
-
   private
 
   def product_params
     params.require(:product).permit(:title, :description, :price)
+  end
+
+  def validate_params
+    if !params.include?("title")
+      render json: "error!!!", status: :unprocessable_entity
+    end
   end
 
 end
