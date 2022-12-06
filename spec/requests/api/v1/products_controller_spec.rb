@@ -25,8 +25,8 @@ RSpec.describe "Products endpoints", type: :request do
 
       it 'persists the values given as params' do
         post api_v1_products_url, params: params
-
         product = Product.last
+
         expect(product.title).to eq("testing product Caro")
         expect(product.description).to eq("testing description product Caro")
         expect(product.price).to eq(83.0)
@@ -75,23 +75,52 @@ RSpec.describe "Products endpoints", type: :request do
 
   describe 'GET /api/v1/products/:id' do
     context 'asking for a product' do
-
       product = Product.new(title: "testing product Caro", description: "testing description product Caro", price: 83.0)
       product.save
 
       it 'returns the product' do
         get api_v1_product_url(product.id)
         product_response = JSON.parse(response.body, object_class: Product)
+
         expect(product_response.id).to eq(product.id)
         expect(product_response.title).to eq(product.title)
         expect(product_response.description).to eq(product.description)
         expect(product_response.price).to eq(product.price)
-
       end
 
       it 'returns a 200 http response' do
         get api_v1_product_url(product.id)
         expect(response).to have_http_status(:ok)
+      end
+    end
+  end
+
+  describe 'PUT /api/v1/products/:id' do
+    context 'updating with valid parameters' do
+      product = Product.new(title: "testing pre-update Caro", description: "testing description product pre-update", price: 83.0)
+      product.save
+
+      params = {
+        product: {
+          title: "title updated Caro",
+          description: "description updated Caro",
+          price: 23.0
+        }
+      }
+
+      it 'returns the product with new values' do
+        put api_v1_product_url(product.id), params: params
+        product_updated = JSON.parse(response.body, object_class: Product)
+
+        expect(product_updated.title).to eq("title updated Caro")
+        expect(product_updated.description).to eq("description updated Caro")
+        expect(product_updated.price).to eq(23.0)
+      end
+
+      it 'returns a 200 http response' do
+        put api_v1_product_url(product.id), params: params
+
+        expect(response.status).to eq(200)
       end
     end
   end

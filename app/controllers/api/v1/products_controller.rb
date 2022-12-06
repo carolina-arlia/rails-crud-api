@@ -20,6 +20,18 @@ class Api::V1::ProductsController < ApplicationController
     render json: product, status: :ok
   end
 
+  def update
+    product = Product.find(params[:id])
+    if product
+      product.update(product_params)
+      render json: product, status: :ok
+    else
+      render json: product.errors, status: :unprocessable_entity
+    end
+  end
+
+
+
   private
 
   def product_params
