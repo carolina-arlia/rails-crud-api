@@ -1,5 +1,5 @@
 class Api::V1::ProductsController < ApplicationController
-  before_action :set_product, only: [:show, :update, :destroy]
+  before_action :set_product, only: [:show, :destroy]
   # before_action :validate_params, only: [:update]
 
   def create
@@ -22,10 +22,22 @@ class Api::V1::ProductsController < ApplicationController
   end
 
   def update
-    if @product.update(product_params)
-      render json: @product
+    # if @product.update(product_params)
+    #   render json: @product
+    # else
+    #   render json: @product.errors, status: :unprocessable_entity
+    # end
+    params_for_update = product_params
+    params_for_update[:id] = params[:id]
+
+    product_updated = ProductUpdater.call(params_for_update)
+
+    if product_updated == nil
+      render json: { error: 'Unable to update nonexistent Product' }, status: :unprocessable_entity
+    elsif product_updated.valid?
+      render json: product_updated
     else
-      render json: @product.errors, status: :unprocessable_entity
+      render json: product_updated.errors, status: :unprocessable_entity
     end
   end
 
@@ -44,7 +56,7 @@ class Api::V1::ProductsController < ApplicationController
   end
 
   def set_product
-    @product = Product.find(params[:id])
+    @product = Product.find_by_id(params[:id])
   end
 
   # def validate_params

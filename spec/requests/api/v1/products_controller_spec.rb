@@ -177,6 +177,14 @@ RSpec.describe "Products endpoints", type: :request do
         end.to change(Product, :count).by(-1)
       end
     end
+
+    context 'asking to delete a nonexistent product' do
+      it 'response should have HTTP Status 422 Unprocessable entity' do
+        delete api_v1_product_url(00)
+
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+    end
   end
 
 end
