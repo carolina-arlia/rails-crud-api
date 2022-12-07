@@ -130,23 +130,51 @@ RSpec.describe "Products endpoints", type: :request do
 
       params = {
         product: {
-          carlitos: "title updated Caro",
+          title: "",
+          description: "",
+          price: -1.0,
         }
       }
 
+      it 'returns a list of errors' do
+        put api_v1_product_url(product.id), params: params
+        product_not_updated = JSON.parse(response.body)
+
+        expect(product_not_updated["title"]).to eq(["can't be blank"])
+        expect(product_not_updated["description"]).to eq(["can't be blank"])
+        expect(product_not_updated["price"]).to eq(["must be greater than or equal to 0"])
+      end
+
       it 'the product doesnt persist new values' do
         put api_v1_product_url(product.id), params: params
-        product_not_updated = JSON.parse(response.body, object_class: Product)
 
-        expect(product_not_updated.title).to eq("testing pre-update Caro")
-        expect(product_not_updated.description).to eq("testing description product pre-update")
-        expect(product_not_updated.price).to eq(83.0)
+        expect(product.title).to eq("testing pre-update Caro")
+        expect(product.description).to eq("testing description product pre-update")
+        expect(product.price).to eq(83.0)
       end
 
       it 'response should have HTTP Status 422 Unprocessable entity' do
         put api_v1_product_url(product.id), params: params
 
         expect(response).to have_http_status(:unprocessable_entity)
+      end
+    end
+  end
+
+  describe 'DELETE /api/v1/products/:id' do
+    context 'asking to delete a product by id' do
+      product_to_delete = Product.create(title: "Product to delete Caro", description: "Testing description product to delete", price: 80.0)
+
+      it 'returns a HTTP Status 204 No content ' do
+        delete api_v1_product_url(product_to_delete.id)
+
+        expect(response).to have_http_status(:no_content)
+      end
+
+      it 'should destroy a product' do
+        expect do
+          delete api_v1_product_url(product_to_delete.id)
+        end.to change(Product, :count).by(-1)
       end
     end
   end

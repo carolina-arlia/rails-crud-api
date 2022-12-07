@@ -1,5 +1,6 @@
 class Api::V1::ProductsController < ApplicationController
-  before_action :validate_params, only: [:update]
+  before_action :set_product, only: [:show, :update, :destroy]
+  # before_action :validate_params, only: [:update]
 
   def create
     product = ProductCreator.call(product_params)
@@ -17,17 +18,22 @@ class Api::V1::ProductsController < ApplicationController
   end
 
   def show
-    product = Product.find(params[:id])
-    render json: product, status: :ok
+    render json: @product, status: :ok
   end
 
   def update
-    product = Product.find(params[:id])
-    if product
-      product.update(product_params)
-      render json: product, status: :ok
+    if @product.update(product_params)
+      render json: @product
     else
-      render json: product.errors, status: :unprocessable_entity
+      render json: @product.errors, status: :unprocessable_entity
+    end
+  end
+
+  def destroy
+    if @product
+      @product.destroy
+    else
+      render json: { error: 'Unable to delete Product' }, status: :unprocessable_entity
     end
   end
 
@@ -37,10 +43,14 @@ class Api::V1::ProductsController < ApplicationController
     params.require(:product).permit(:title, :description, :price)
   end
 
-  def validate_params
-    if !params.include?("title")
-      render json: "error!!!", status: :unprocessable_entity
-    end
+  def set_product
+    @product = Product.find(params[:id])
   end
+
+  # def validate_params
+  #   if !params.include?("title")
+  #     render json: "error!!!", status: :unprocessable_entity
+  #   end
+  # end
 
 end
