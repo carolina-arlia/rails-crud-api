@@ -1,6 +1,6 @@
 class Api::V1::ProductsController < ApplicationController
-  before_action :set_product, only: [:show, :destroy]
   # before_action :validate_params, only: [:update]
+  before_action :set_product, only: [:show, :destroy]
 
   def create
     product = ProductCreator.call(product_params)
