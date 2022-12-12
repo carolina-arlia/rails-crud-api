@@ -186,5 +186,4 @@ RSpec.describe "Products endpoints", type: :request do
       end
     end
   end
-
 end
