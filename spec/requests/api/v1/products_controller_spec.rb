@@ -163,6 +163,9 @@ RSpec.describe "Products endpoints", type: :request do
 
   describe 'DELETE /api/v1/products/:id' do
     context 'asking to delete a product by id' do
+      p "todos los productos que hay son:"
+      productos = Product.all
+      p productos.size
       product_to_delete = Product.create(title: "Product to delete Caro", description: "Testing description product to delete", price: 80.0)
 
       it 'returns a HTTP Status 204 No content ' do
