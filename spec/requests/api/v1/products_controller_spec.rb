@@ -83,9 +83,9 @@ RSpec.describe "Products endpoints", type: :request do
         product_response = JSON.parse(response.body, object_class: Product)
 
         expect(product_response.id).to eq(product.id)
-        expect(product_response.title).to eq(product.title)
-        expect(product_response.description).to eq(product.description)
-        expect(product_response.price).to eq(product.price)
+        expect(product_response.title).to eq("testing product Caro")
+        expect(product_response.description).to eq("testing description product Caro")
+        expect(product_response.price).to eq(83.0)
       end
 
       it 'returns a 200 http response' do
