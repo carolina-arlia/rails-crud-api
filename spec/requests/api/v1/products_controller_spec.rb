@@ -163,7 +163,7 @@ RSpec.describe "Products endpoints", type: :request do
 
   describe 'DELETE /api/v1/products/:id' do
     context 'asking to delete a product by id' do
-      p "todos los productos que hay son:"
+      p "todos los productos que hay en la BBDD de testing son:"
       productos = Product.all
       p productos.size
       product_to_delete = Product.create(title: "Product to delete Caro", description: "Testing description product to delete", price: 80.0)
